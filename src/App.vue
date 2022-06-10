@@ -1,28 +1,31 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+	<div id="wrapper" class="d-flex">
+		<Sidebar />
+		<PageContent />
+	</div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+	import Sidebar from './components/Sidebar.vue';
+	import PageContent from './components/PageContent.vue';
 
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+	export default {
+		name: 'App',
+		components: {
+			Sidebar,
+			PageContent,
+		},
+		mounted() {
+			var sidebartoogler = this.$el.querySelector('#sidebarToggle');
+			sidebartoogler.addEventListener('click', (e) => {
+				e.preventDefault();
+				document.body.classList.toggle('sb-sidenav-toggled');
+			});
+		},
+	};
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+	@import '~bootstrap/dist/css/bootstrap.css';
+	@import '~assets/sidebar.css';
 </style>
