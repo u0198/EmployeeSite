@@ -27,5 +27,6 @@
 
 <style>
 	@import '~bootstrap/dist/css/bootstrap.css';
-	@import '~assets/sidebar.css';
+	@import '~assets/base.css';
+	@import '~assets/navbar.css';
 </style>

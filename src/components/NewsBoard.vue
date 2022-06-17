@@ -1,31 +1,38 @@
-<template lang="">
-	<div class="newsticker mt-2 mb-4">
-		<div class="labelBox bg-lc bg-opacity-50 ps-2 pe-2">
-			<i class="fa fa-bell pe-1 text-light"></i>
-			<span class="text-light d-none d-sm-inline-block">公告</span>
-		</div>
-		<div class="newsBox d-flex justify-content-between align-items-center">
-			<div class="d-flex flex-column flex-sm-row" v-for="i in [currentIndex]" :key="i">
-				<span class="ps-sm-2 pe-sm-2">{{ currentNews.date }}</span>
-				<a :href="currentNews.link" class="link-secondary">{{ currentNews.text }}</a>
-			</div>
-			<div class="d-flex flex-column flex-sm-row">
-				<div id="prev-select" class="circle" @click="prev">
-					<i class="fas fa-chevron-up"></i>
+<template>
+	<div class="d-flex flex-column w-100" style="height: 400px">
+		<ul class="list-group">
+			<li class="list-group-item d-flex justify-content-between bg-light">
+				<span style="color: var(--bs-gray-600)">{{ $t('pageContent.newsBoard.title') }}</span>
+				<span>
+					<i class="fas fa-arrow-circle-right ps-1 pe-1 text-lc"></i>
+					<a href="http://www06.longchenpaper.com/eip/sayall080613.asp" class="text-lc text-decoration-none active">{{
+						$t('pageContent.newsBoard.detail')
+					}}</a>
+				</span>
+			</li>
+			<li class="list-group-item list-group-item-action" v-for="newsItem in displayNews" :key="newsItem.title">
+				<p>{{ newsItem.title }}</p>
+				<div class="d-flex justify-content-between">
+					<a :href="newsItem.link" class="text-secondary">{{ newsItem.text }}</a>
+					<span>{{ newsItem.date }}</span>
 				</div>
-				<div id="next-select" class="circle" @click="next">
-					<i class="fas fa-chevron-down"></i>
-				</div>
-			</div>
-		</div>
+			</li>
+		</ul>
+		<Pagination class="m-2" :totalPages="totalPages" :perPage="perPage" :currentPage="currentPage" @pagechanged="onPageChange" />
 	</div>
 </template>
 
 <script>
+	import Pagination from './Pagination.vue';
+
 	export default {
-		name: 'Newsticker',
+		name: 'NewsBoard',
+		components: {
+			Pagination,
+		},
 		data() {
 			return {
+				currentPage: 1,
 				newsItems: [
 					{
 						id: 1,
@@ -97,83 +104,51 @@
 						link: 'http://www06.longchenpaper.com/eip/say010401.asp?sid=3427&rnd=',
 						date: '2022/3/16',
 					},
+					{
+						id: 11,
+						title: '【 人事異動 】 (22)榮管字第0303號',
+						text: '章興國人事異動',
+						link: 'http://www06.longchenpaper.com/eip/sayall080613.asp',
+						date: '2022/3/16',
+					},
+					{
+						id: 12,
+						title: '【 人事異動 】 (22)榮管字第0305號',
+						text: 'OOO人事異動',
+						link: 'http://www06.longchenpaper.com/eip/sayall080613.asp',
+						date: '2022/3/12',
+					},
+					{
+						id: 13,
+						title: '【 人事異動 】 (22)榮管字第0306號',
+						text: 'XXX人事異動',
+						link: 'http://www06.longchenpaper.com/eip/sayall080613.asp',
+						date: '2022/3/4',
+					},
 				],
-				timer: null,
-				currentIndex: 0,
+				totalPages: 0,
+				perPage: 4,
 			};
 		},
-		mounted() {
-			this.startSlide();
-		},
 		methods: {
-			startSlide() {
-				this.timer = setInterval(this.next, 4000);
+			onPageChange(page) {
+				console.log(page);
+				this.currentPage = page;
 			},
-
-			next() {
-				this.currentIndex += 1;
+			setTotalPages() {
+				this.totalPages = Math.ceil(this.newsItems.length / this.perPage);
 			},
-			prev() {
-				this.currentIndex -= 1;
-			},
+		},
+		mounted() {
+			this.setTotalPages();
 		},
 		computed: {
-			currentNews() {
-				return this.newsItems[Math.abs(this.currentIndex) % this.newsItems.length];
+			displayNews() {
+				let from = this.currentPage * this.perPage - this.perPage;
+				let to = this.currentPage * this.perPage;
+
+				return this.newsItems.slice(from, to);
 			},
 		},
 	};
 </script>
-
-<style>
-	.newsticker {
-		position: relative;
-		width: 100%;
-		background: white;
-		/* border-radius: 10px; */
-		padding: 0 6px;
-		/* box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.1); */
-	}
-	.labelBox {
-		position: absolute;
-		top: 0;
-		left: 0;
-		color: white;
-		font-weight: 600;
-		height: 35px;
-		/* padding: 0 8px; */
-		padding-top: 5px;
-		margin-top: 5px;
-		/* border-radius: 10px 0 0 10px; */
-	}
-	.newsBox {
-		padding-left: 40px;
-	}
-	.circle {
-		color: var(--bs-gray-300);
-		padding: 0 5px;
-		border: 2px solid var(--bs-gray-300);
-		border-radius: 50%;
-		margin: 2px 4px;
-		cursor: pointer;
-	}
-	.circle:hover {
-		color: var(--bs-gray-200);
-		border: 2px solid var(--bs-gray-200);
-	}
-
-	@media (min-width: 576px) {
-		.newsticker {
-			padding: 8px;
-		}
-		.labelBox {
-			margin-top: 5px;
-		}
-		.newsBox {
-			padding-left: 60px;
-		}
-		.circle {
-			margin: 0 4px;
-		}
-	}
-</style>
